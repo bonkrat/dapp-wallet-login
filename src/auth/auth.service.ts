@@ -10,12 +10,9 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    address: string,
-    code: string,
-    signature: string,
-  ): Promise<any> {
-    const user = await this.userService.user({ address });
+  async validateUser(address: string, signature: string): Promise<any> {
+    const user = await this.userService.user({ address }),
+      code = this.userCodeMap.get(address);
 
     if (this.verifySignature(address, code, signature)) {
       if (!user) {
@@ -39,8 +36,19 @@ export class AuthService {
     };
   }
 
-  generateCode() {
-    return { code: Math.floor(Math.random() * 1000000).toString() };
+  getUserCode(address: string) {
+    let code = this.userCodeMap.get(address);
+
+    if (!code) {
+      code = this.generateCode();
+      this.userCodeMap.set(address, code);
+    }
+
+    return { code };
+  }
+
+  private generateCode() {
+    return Math.floor(Math.random() * 1000000).toString();
   }
 
   private verifySignature(
@@ -62,4 +70,6 @@ export class AuthService {
 
     return address.toLowerCase() === publicAddress.toLowerCase();
   }
+
+  private userCodeMap = new Map();
 }

@@ -1,5 +1,11 @@
-import { Controller, Get, UseGuards, Post, Request } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AddressAuthGuard } from './address-auth.guard';
 import { AuthService } from './auth.service';
 
@@ -13,8 +19,8 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Get('/code')
-  getCode() {
-    return this.authService.generateCode();
+  @Get('/code/:address')
+  getCode(@Param() params) {
+    return this.authService.getUserCode(params.address);
   }
 }

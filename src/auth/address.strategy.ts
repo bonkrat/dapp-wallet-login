@@ -11,8 +11,8 @@ export class AddressStrategy extends PassportStrategy(Strategy, 'address') {
   }
 
   async validate(@Req() request: Request): Promise<any> {
-    const { address, code, signature } = request.body;
-    const user = await this.authService.validateUser(address, code, signature);
+    const { address, signature } = request.body;
+    const user = await this.authService.validateUser(address, signature);
     if (!user) {
       throw new UnauthorizedException();
     }
